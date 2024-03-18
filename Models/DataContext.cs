@@ -12,6 +12,7 @@ namespace BookStore.Models
         public DataContext(DbContextOptions<DataContext> option) : base(option) { }
 
         public DbSet<Book> Books { get; set; }
+        public DbSet<Author> Authors { get; set; }
 
     }
 }

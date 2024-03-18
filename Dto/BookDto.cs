@@ -9,5 +9,6 @@ namespace BookStore.Dto
     {
         public string Title { get; set; }
         public decimal Price { get; set; }
+        public Guid AuthorId { get; set; }
     }
 }

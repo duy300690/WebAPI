@@ -28,25 +28,46 @@ namespace BookStore.Controllers
         [HttpGet]
         public async Task<IActionResult> GetBook()
         {
-            return Ok(await _context.Books.ToListAsync());
+            var result = await (from b in _context.Books
+                                join au in _context.Authors
+                                on b.AuthorId equals au.Id
+                                select new
+                                {
+                                    Id = b.Id,
+                                    Title = b.Title,
+                                    Price = b.Price,
+                                    Author = string.Format("{0} {1}", au.FirstName, au.LastName)
+                                }
+            ).ToListAsync();
+            return Ok(result);
         }
 
         [HttpGet("{id}")]
         public async Task<IActionResult> GetBook(Guid id)
         {
-            var book = await _context.Books.FindAsync(id);
-            return book != null ? Ok(book) : NotFound("Did not find");
+            var result = await (from b in _context.Books
+                                join au in _context.Authors
+                                on b.AuthorId equals au.Id
+                                select new
+                                {
+                                    Id = b.Id,
+                                    Title = b.Title,
+                                    Price = b.Price,
+                                    Author = string.Format("{0} {1}", au.FirstName, au.LastName)
+                                }
+            ).FirstOrDefaultAsync();
+            return result != null ? Ok(result) : NotFound("Did not find");
         }
 
         [HttpPost]
         public async Task<IActionResult> Create(BookDto bookRequest)
         {
-
             _context.Books.Add(new Book()
             {
                 Id = Guid.NewGuid(),
                 Title = bookRequest.Title,
                 Price = bookRequest.Price,
+                AuthorId = bookRequest.AuthorId,
             });
             await _context.SaveChangesAsync();
 
@@ -61,6 +82,7 @@ namespace BookStore.Controllers
             {
                 book.Title = bookRequest.Title;
                 book.Price = bookRequest.Price;
+                book.AuthorId = bookRequest.AuthorId;
                 await _context.SaveChangesAsync();
                 return Ok(book);
             }
