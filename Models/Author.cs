@@ -12,6 +12,6 @@ namespace BookStore.Models
         public string LastName { get; set; }
         public string Email { get; set; }
         public string Phone { get; set; }
-        public IList<Book> Books { get; set; }
+        public IList<AuthorBook> AuthorBooks { get; set; }
     }
 }

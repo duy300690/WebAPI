@@ -77,7 +77,7 @@ namespace BookStore.Controllers
             if (authors == null)
                 return NotFound("Author not found");
 
-            var count = await _context.Books.CountAsync(x => x.AuthorId == id);
+            var count = await _context.Books.CountAsync(x => x.AuthorBooks.FirstOrDefault().Id == id);
             if (count > 0)
                 return BadRequest("Can't delete author when there are book write by this author");
 

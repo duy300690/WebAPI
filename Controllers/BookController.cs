@@ -28,35 +28,16 @@ namespace BookStore.Controllers
         [HttpGet]
         public async Task<IActionResult> GetBook()
         {
-            var result = await (from b in _context.Books
-                                join au in _context.Authors
-                                on b.AuthorId equals au.Id
-                                select new
-                                {
-                                    Id = b.Id,
-                                    Title = b.Title,
-                                    Price = b.Price,
-                                    Author = string.Format("{0} {1}", au.FirstName, au.LastName)
-                                }
-            ).ToListAsync();
+            var result = await _context.Books.ToListAsync();
             return Ok(result);
         }
 
         [HttpGet("{id}")]
         public async Task<IActionResult> GetBook(Guid id)
         {
-            var result = await (from b in _context.Books
-                                join au in _context.Authors
-                                on b.AuthorId equals au.Id
-                                select new
-                                {
-                                    Id = b.Id,
-                                    Title = b.Title,
-                                    Price = b.Price,
-                                    Author = string.Format("{0} {1}", au.FirstName, au.LastName)
-                                }
-            ).FirstOrDefaultAsync();
+            var result = await _context.Books.FindAsync(id);
             return result != null ? Ok(result) : NotFound("Did not find");
+
         }
 
         [HttpPost]
@@ -67,7 +48,6 @@ namespace BookStore.Controllers
                 Id = Guid.NewGuid(),
                 Title = bookRequest.Title,
                 Price = bookRequest.Price,
-                AuthorId = bookRequest.AuthorId,
             });
             await _context.SaveChangesAsync();
 
@@ -82,7 +62,6 @@ namespace BookStore.Controllers
             {
                 book.Title = bookRequest.Title;
                 book.Price = bookRequest.Price;
-                book.AuthorId = bookRequest.AuthorId;
                 await _context.SaveChangesAsync();
                 return Ok(book);
             }
